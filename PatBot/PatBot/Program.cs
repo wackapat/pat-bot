@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using DSharpPlus.EventArgs;
 using System.Configuration;
+using System.Linq;
 
 namespace PatBot
 {
@@ -13,6 +14,7 @@ namespace PatBot
     {
         static DiscordClient discord;
         static List<ICommand> commands = new List<ICommand>();
+        static List<IScheduledTask> tasks = new List<IScheduledTask>();
         static Logger logger = LogManager.GetCurrentClassLogger();
 
         static void RegisterCommands()
@@ -22,6 +24,30 @@ namespace PatBot
             commands.Add(new Commands.Roll());
             commands.Add(new Commands.SayGoodnight());
             commands.Add(new Commands.UnassignPronoun());
+        }
+
+        static void RegisterScheduledTasks()
+        {
+            var dj = new ScheduledTasks.TellDadJoke();
+            dj.Load().Wait();
+            tasks.Add(dj);
+        }
+
+        static void RunScheduledTasks()
+        {
+            var guild = discord.GetGuildAsync(ulong.Parse(ConfigurationManager.AppSettings["DiscordGuildId"])).Result;
+
+            foreach (IScheduledTask t in tasks)
+            {
+                Task.Run(async () =>
+                {
+                    while (true)
+                    {
+                        await t.Do(guild);
+                        await Task.Delay(t.Frequency);
+                    }
+                });
+            }
         }
 
         static void Main(string[] args)
@@ -69,6 +95,7 @@ namespace PatBot
         {
             logger.Info("Pat-Bot started.");
             RegisterCommands();
+            RegisterScheduledTasks();
 
             string token = ConfigurationManager.AppSettings["DiscordBotToken"];
 
@@ -79,6 +106,8 @@ namespace PatBot
             });
 
             discord.MessageCreated += OnMessageReceived;
+
+            RunScheduledTasks();
 
             await discord.ConnectAsync();
             await Task.Delay(-1);

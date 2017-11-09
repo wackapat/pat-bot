@@ -14,7 +14,7 @@ namespace PatBot.ScheduledTasks
 {
     class TellDadJoke : IScheduledTask
     {
-        public TimeSpan Frequency => TimeSpan.FromMinutes(5.0);
+        public TimeSpan Frequency => TimeSpan.FromHours(12.0);
 
         static Logger logger = LogManager.GetCurrentClassLogger();
         static Random rnd = new Random();

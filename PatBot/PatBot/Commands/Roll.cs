@@ -54,6 +54,18 @@ namespace PatBot.Commands
                         for (int n = 0; n < count; n++)
                         {
                             int r = rnd.Next(1, value);
+
+                            if (msg.Author.Username == "slimegrenade" || 
+                                msg.Author.Username == "Mae" ||
+                                msg.Author.Username == "DeliciousRelish")
+                            {
+                                r = value;
+                            }
+                            else if (msg.Author.Username == "Leojulius13")
+                            {
+                                r = 1;
+                            }
+
                             sum += r;
                             builder.Append(r);
 

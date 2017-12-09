@@ -19,11 +19,11 @@ namespace PatBot
 
         static void RegisterCommands()
         {
-            commands.Add(new Commands.AssignPronoun());
+            // commands.Add(new Commands.AssignPronoun()); People didn't really like this one
+            // commands.Add(new Commands.UnassignPronoun());
             commands.Add(new Commands.Ping());
             commands.Add(new Commands.Roll());
             commands.Add(new Commands.SayGoodnight());
-            commands.Add(new Commands.UnassignPronoun());
         }
 
         static void RegisterScheduledTasks()
